@@ -1,7 +1,14 @@
-<h1>
-    ファイルをアップロードして判定しよう
-</h1>
-<form action="{{ url_for('convert') }}" method = post enctype = multipart/form-data>
-<input type=file name = file>
-<input type = submit value = Upload>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image to PDF V1</title>
+</head>
+<body>
+    <p>変換したいファイルを選択してください</p>
+    <form action="{{ url_for('convert') }}" method = post enctype = multipart/form-data>
+        <input type=file name = file>
+        <input type = submit value = Upload>
+    </form>
+</body>
+</html>
