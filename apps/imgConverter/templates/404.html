@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>404-ページが見つかりません</title>
+{% endblock %}
+
+{% block body %}
+    <h1>404 Not Found</h1>
+    <a href="{{ url_for('index') }}">トップページへ戻る</a>
+{% endblock %}

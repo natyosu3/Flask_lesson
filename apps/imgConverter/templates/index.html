@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
+{% extends 'base.html' %}
+{% block head %}
     <title>Welecome Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
-</head>
-<body>
+{% endblock %}
+    
+{% block body %}
     <h1>Hello, World!</h1>
     <br>
-    <input type="button" class="button" value="変換ページへ" onclick="location.href='convert'">
-</body>
-</html>
+    <input type="button" class="button" value="変換ページへ" onclick="location.href='upload'">
+{% endblock %}

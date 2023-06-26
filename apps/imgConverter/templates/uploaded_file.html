@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
+{% extends 'base.html' %}
+{% block head %}
     <title>アップロード完了</title>
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <h1>ファイルアップロード完了</h1>
     <h2>{{filename}}</h2>
     <p>変換終了するまでお待ちください</p>
-</body>
-</html>
+{% endblock %}
