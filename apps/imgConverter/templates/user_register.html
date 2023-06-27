@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>ユーザー登録</title>
+{% endblock %}
+
+{% block body %}
+    <h1>ユーザー登録ページです。</h1>
+    <br>
+    <form action="" method="POST">
+        <label for="user_name">ユーザーネーム</label>
+        <input type="text" name="user_name">
+        <label for="email">メールアドレス</label>
+        <input type="text" name="email">
+        <label for="password">パスワード</label>
+        <input type="text" name="password">
+        <input type="submit" value="登録">
+      </form>
+{% endblock %}

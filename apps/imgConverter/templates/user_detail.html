@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block head %}
+    <title>ユーザー情報</title>
+{% endblock %}
+
+{% block body %}
+    <h2>登録情報の詳細です</h2>
+    <p>ID:{{user_info.id}}</p>
+    <p>ユーザーネーム:{{user_info.user_name}}</p>
+    <p>Email:{{user_info.email}}</p>
+    <p>パスワード:{{user_info.password}}</p>
+{% endblock %}

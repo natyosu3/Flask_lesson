@@ -1,16 +1,63 @@
 from flask import Flask, render_template, redirect, request, url_for
 from werkzeug.utils import secure_filename
 import os
+from flask_sqlalchemy import SQLAlchemy
 import magic
 import time
 
+
+DATABASE = "database.db"
 app = Flask(__name__)
 
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1000 * 1000
+app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO']=True
 
-@app.route("/")
+db = SQLAlchemy()
+db.init_app(app)
+
+# テーブルを定義
+class UserInfo(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  user_name = db.Column(db.String, nullable=False)
+  email = db.Column(db.String, nullable=False)
+  password = db.Column(db.String, nullable=False)
+
+
+@app.route("/user_register", methods=["GET", "POST"])
+def user_register():
+    if request.method == "POST":
+        user_info = UserInfo(
+            user_name = request.form["user_name"],
+            email = request.form["email"],
+            password = request.form["password"]
+        )
+        db.session.add(user_info)
+        db.session.commit()
+        return "HELLO, SQL"
+    else:
+        return render_template("user_register.html")
+
+# IDからDBのユーザー情報を取得して表示
+@app.route("/user_<int:id>")
+def user_detail(id):
+    user_info = db.get_or_404(UserInfo, id)
+    return render_template("user_detail.html", user_info=user_info)
+
+
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if request.method == "POST":
+        user_name = request.form["user_name"]
+        user = UserInfo.query.filter_by(user_name=user_name).first()
+        if user:
+            return redirect(url_for("user_detail", id=user.id))
+        else:
+            return render_template("index.html")
+    else:
+        return render_template("index.html")
 
 
 @app.route('/upload', methods=['GET', 'POST'])
