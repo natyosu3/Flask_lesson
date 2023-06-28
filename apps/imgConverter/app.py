@@ -1,7 +1,9 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, Response
 from werkzeug.utils import secure_filename
-import os
+import os, requests
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, String, Integer
+from sqlalchemy.exc import IntegrityError
 import magic
 import time
 
@@ -9,33 +11,49 @@ import time
 DATABASE = "database.db"
 app = Flask(__name__)
 
+
+app.config['SECRET_KEY'] = os.urandom(24)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1000 * 1000
-app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO']=True
+app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy()
 db.init_app(app)
 
+
 # テーブルを定義
 class UserInfo(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  user_name = db.Column(db.String, nullable=False)
-  email = db.Column(db.String, nullable=False)
-  password = db.Column(db.String, nullable=False)
+    id = Column(Integer, primary_key=True)
+    user_name = Column(String, nullable=False, unique=True)
+    email = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+
+
+@app.after_request
+def add_header(response: Response):
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    return response
 
 
 @app.route("/user_register", methods=["GET", "POST"])
 def user_register():
     if request.method == "POST":
-        user_info = UserInfo(
-            user_name = request.form["user_name"],
-            email = request.form["email"],
-            password = request.form["password"]
-        )
-        db.session.add(user_info)
-        db.session.commit()
-        return "HELLO, SQL"
+        try:
+            user_info = UserInfo(
+                user_name = request.form["user_name"],
+                email = request.form["email"],
+                password = request.form["password"]
+            )
+            db.session.add(user_info)
+            db.session.commit()
+            return "HELLO, SQL"
+        except IntegrityError:
+            db.session.rollback()
+            return "User name already exists. Please choose a different user name."
+        
     else:
         return render_template("user_register.html")
 
@@ -97,6 +115,3 @@ def finish_page(filename):
 def page_not_found(error):
   return render_template("404.html")
 
-
-if __name__ == "__main__":
-    app.run(debug=True)

@@ -7,11 +7,12 @@
 {% block body %}
     <h1>Hello, World!</h1>
     <br>
-    <input type="button" class="button" value="変換ページへ" onclick="location.href='upload'">
+    <input type="button" class="button" value="変換ページへ" id="convertButton">
     <br>
     <form action="" method="post">
         <label for="user_name">ユーザーネーム</label>
         <input type="text" name="user_name">
         <input type="submit" value="個人詳細ページへ">
     </form>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}
